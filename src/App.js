@@ -1,4 +1,4 @@
-import {useEffect, useState} from "react";
+import {useCallback, useEffect, useRef, useState} from "react";
 import {Card, CardContent} from "@mui/material";
 import {createApi} from "unsplash-js";
 import axios from 'axios'
@@ -7,6 +7,20 @@ const UnsplashPhotoGrid = () => {
     const [photos, setPhotos] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [page, setPage] = useState(1);
+    const [hasMore, setHasMore] = useState(true);
+
+    const observer = useRef();
+    const lastPhotoElementRef = useCallback(node => {
+        if (loading) return;
+        if (observer.current) observer.current.disconnect();
+        observer.current = new IntersectionObserver(entries => {
+            if (entries[0].isIntersecting && hasMore) {
+                setPage(prevPage => prevPage + 1);
+            }
+        });
+        if (node) observer.current.observe(node);
+    }, [loading, hasMore]);
 
     const unsplash = createApi({
         apiKey: process.env.UNSPLASH_API_ACCESS_KEY,
@@ -20,7 +34,7 @@ const UnsplashPhotoGrid = () => {
 
     useEffect(() => {
         fetchPhotos()
-    }, [])
+    }, [page])
 
     function mockData() {
         const mockData = Array(12).fill().map((_, index) => ({
@@ -36,25 +50,41 @@ const UnsplashPhotoGrid = () => {
     const fetchPhotos = async () => {
         setLoading(true);
         try {
-            // todo fetch photos from unsplashAPI
-            axios.request(config)
-                .then((response) => {
-                    console.log(response.data);
-                    const list = response.data;
-                    const photos = list.map((item, _) => ({
-                        id: item?.id,
-                        urls: {thumb: item?.urls?.thumb},
-                        user: {
-                            name: `Photographer ${item?.user?.name}`,
-                        }
-                    }))
+            // axios.request(config)
+            //     .then((response) => {
+            //         console.log(response.data);
+            //         const list = response.data;
+            //         const photos = list.map((item, _) => ({
+            //             id: item?.id,
+            //             urls: {thumb: item?.urls?.thumb},
+            //             user: {
+            //                 name: `Photographer ${item?.user?.name}`,
+            //             }
+            //         }))
+            //
+            //         setPhotos(photos);
+            //     })
+            //     .catch((error) => {
+            //         console.log(error);
+            //         setPhotos(mockData)
+            //     });
 
-                    setPhotos(photos);
-                })
-                .catch((error) => {
-                    console.log(error);
-                    setPhotos(mockData)
-                });
+            const response = await axios.request(config)
+            console.log('response: ', response)
+            const list = response.data
+            if (list.length === 0) {
+                setHasMore(false);
+            } else {
+                const list = response.data;
+                const newPhotos = list.map((item, _) => ({
+                    id: item?.id,
+                    urls: {thumb: item?.urls?.thumb},
+                    user: {
+                        name: `Photographer ${item?.user?.name}`,
+                    }
+                }))
+                setPhotos(prevPhotos => [...prevPhotos, ...newPhotos]);
+            }
         } catch (e) {
             setError("Failed to fetch photos");
         } finally {
@@ -75,8 +105,11 @@ const UnsplashPhotoGrid = () => {
         <div className="container mx-auto px-4 py-8">
             <h1 className="text-3xl font-bold underline">Unsplash API Photo</h1>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                {photos.map((photo, _) => (
-                    <Card key={photo.id} className="overflow-hidden">
+                {photos.map((photo, index) => (
+                    <Card key={photo.id}
+                          className="overflow-hidden"
+                          ref={photos.length === index + 1 ? lastPhotoElementRef : null}
+                    >
                         <CardContent className="p-0">
                             <img
                                 src={photo.urls.thumb}
@@ -87,6 +120,13 @@ const UnsplashPhotoGrid = () => {
                     </Card>
                 ))}
             </div>
+            {loading && (
+                <div className="text-center py-4">
+                    <p>Đang tải thêm ảnh...</p>
+                </div>
+            )}
+            {!hasMore && <p className="text-center py-4">Không còn ảnh để tải.</p>}
+
         </div>
     )
 }
