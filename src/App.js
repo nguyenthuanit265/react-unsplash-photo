@@ -1,12 +1,13 @@
 import {useEffect, useState} from "react";
+import {Card, CardContent} from "@mui/material";
 
 const UnsplashPhotoGrid = () => {
-    const [photo, setPhoto] = useState([]);
+    const [photos, setPhotos] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
     useEffect(() => {
-
+        fetchPhotos()
     }, [])
 
     const fetchPhotos = () => {
@@ -22,7 +23,7 @@ const UnsplashPhotoGrid = () => {
                 }
             }))
 
-            setPhoto(mockData);
+            setPhotos(mockData);
         } catch (e) {
             setError("Failed to fetch photos");
         } finally {
@@ -42,8 +43,17 @@ const UnsplashPhotoGrid = () => {
     return (
         <div className="container">
             <h1 className="text-3xl font-bold underline">Unsplash API Photo</h1>
-            <div>
-
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                {photos.map((photo, _) => (
+                    <Card key={photo.id}>
+                        <CardContent>
+                            <img
+                                src={photo.urls.thumb}
+                                alt={`Photo by ${photo.user.name}`}
+                            />
+                        </CardContent>
+                    </Card>
+                ))}
             </div>
         </div>
     )
