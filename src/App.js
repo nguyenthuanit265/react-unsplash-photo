@@ -1,7 +1,23 @@
-import {useCallback, useEffect, useRef, useState} from "react";
+import React, {useCallback, useEffect, useRef, useState} from "react";
 import {Card, CardContent} from "@mui/material";
 import {createApi} from "unsplash-js";
 import axios from 'axios'
+
+
+const PhotoCard = React.memo(React.forwardRef(({photo}, ref) => (
+    <Card ref={ref} className="overflow-hidden">
+        <CardContent className="p-0">
+            <img
+                src={photo.urls.thumb}
+                alt={`Ảnh bởi ${photo.user.name}`}
+                className="w-full h-48 object-cover"
+            />
+        </CardContent>
+        <div className="p-2">
+            <p className="text-sm font-medium">{photo.user.name}</p>
+        </div>
+    </Card>
+)));
 
 const UnsplashPhotoGrid = () => {
     const [photos, setPhotos] = useState([]);
@@ -25,12 +41,15 @@ const UnsplashPhotoGrid = () => {
     const unsplash = createApi({
         apiKey: process.env.UNSPLASH_API_ACCESS_KEY,
     })
-    let config = {
-        method: 'get',
-        maxBodyLength: Infinity,
-        url: `https://api.unsplash.com/photos/?client_id={}`,
-        headers: {}
-    };
+
+    const getConfig = (page) => {
+        return {
+            method: 'get',
+            maxBodyLength: Infinity,
+            url: `https://api.unsplash.com/photos/?page=${page}&&client_id=s5QQKak8oNeZTfNhrOvYBSBppXwP9iOF1sLso2cL1is`,
+            headers: {}
+        };
+    }
 
     useEffect(() => {
         fetchPhotos()
@@ -69,9 +88,10 @@ const UnsplashPhotoGrid = () => {
             //         setPhotos(mockData)
             //     });
 
-            const response = await axios.request(config)
+            const response = await axios.request(getConfig(page))
             console.log('response: ', response)
             const list = response.data
+            console.log("length: " + list.length);
             if (list.length === 0) {
                 setHasMore(false);
             } else {
@@ -106,18 +126,11 @@ const UnsplashPhotoGrid = () => {
             <h1 className="text-3xl font-bold underline">Unsplash API Photo</h1>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                 {photos.map((photo, index) => (
-                    <Card key={photo.id}
-                          className="overflow-hidden"
-                          ref={photos.length === index + 1 ? lastPhotoElementRef : null}
-                    >
-                        <CardContent className="p-0">
-                            <img
-                                src={photo.urls.thumb}
-                                alt={`Photo by ${photo.user.name}`}
-                                className="w-full h-48 object-cover"
-                            />
-                        </CardContent>
-                    </Card>
+                    <PhotoCard
+                        key={photo.id}
+                        photo={photo}
+                        ref={photos.length === index + 1 ? lastPhotoElementRef : null}
+                    />
                 ))}
             </div>
             {loading && (
