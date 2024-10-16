@@ -11,7 +11,7 @@ const UNSPLASH_API_KEY = process.env.REACT_APP_UNSPLASH_API_KEY;
 // Main App component - Sets up routing for the application
 const App = () => {
     return (
-        <Router basename={process.env.PUBLIC_URL}>
+        <Router>
             <Routes>
                 <Route path="/" element={<UnsplashPhotoGrid/>}/>
                 <Route path="/photos/:id" element={<PhotoDetail/>}/>
