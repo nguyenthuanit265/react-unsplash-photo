@@ -1,15 +1,15 @@
 {
   "files": {
-    "main.css": "https://nguyenthuanit265.github.io/react-unsplash-photo/static/css/main.ca93c472.css",
-    "main.js": "https://nguyenthuanit265.github.io/react-unsplash-photo/static/js/main.ad04dfc6.js",
-    "static/js/453.afb86e2b.chunk.js": "https://nguyenthuanit265.github.io/react-unsplash-photo/static/js/453.afb86e2b.chunk.js",
-    "index.html": "https://nguyenthuanit265.github.io/react-unsplash-photo/index.html",
-    "main.ca93c472.css.map": "https://nguyenthuanit265.github.io/react-unsplash-photo/static/css/main.ca93c472.css.map",
-    "main.ad04dfc6.js.map": "https://nguyenthuanit265.github.io/react-unsplash-photo/static/js/main.ad04dfc6.js.map",
-    "453.afb86e2b.chunk.js.map": "https://nguyenthuanit265.github.io/react-unsplash-photo/static/js/453.afb86e2b.chunk.js.map"
+    "main.css": "/react-unsplash-photo/static/css/main.ca93c472.css",
+    "main.js": "/react-unsplash-photo/static/js/main.f9f5462c.js",
+    "static/js/453.afb86e2b.chunk.js": "/react-unsplash-photo/static/js/453.afb86e2b.chunk.js",
+    "index.html": "/react-unsplash-photo/index.html",
+    "main.ca93c472.css.map": "/react-unsplash-photo/static/css/main.ca93c472.css.map",
+    "main.f9f5462c.js.map": "/react-unsplash-photo/static/js/main.f9f5462c.js.map",
+    "453.afb86e2b.chunk.js.map": "/react-unsplash-photo/static/js/453.afb86e2b.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.ca93c472.css",
-    "static/js/main.ad04dfc6.js"
+    "static/js/main.f9f5462c.js"
   ]
 }
